@@ -50,8 +50,12 @@ For this tutorial we will be using the link:http://gwt.googleusercontent.com/sam
 === 1. Importing Your Project into Eclipse
 
 .. In the Eclipse menu, go to _File_ > _New_ > _Java Project_.
++
+image:images/new-java-project.png[]
 
 .. Deselect _Use default location_ and click _Browse_.
++
+image:images/project-location-1.png[]
 
 .. Find and select the root directory for your project and click _Finish_.
 
@@ -60,8 +64,12 @@ For this tutorial we will be using the link:http://gwt.googleusercontent.com/sam
 .. If your project is already a maven project then skip to step (3).
 
 .. Right click on your project and select _Configure_ > _Convert to Maven Project_.
++
+image:images/update-to-maven-project.png[]
 
 .. Fill in the fields for your maven artifact and click _Finish_.
++
+image:images/maven-artifact-info.png[]
 
 === 3. Configuring the Source, Resource, and War Source Folders
 
@@ -84,7 +92,7 @@ If you know that your project follows this layout (for example, if you use the d
 ==== 5. Set the Resource Directories
 
 .. In your project's _pom.xml_ find the tag `project` > `build` > `resources` and replace its contents with this:
-
++
 [source, xml]
 ----
     <resources>
@@ -102,6 +110,8 @@ If you know that your project follows this layout (for example, if you use the d
       </resource>
     </resources>
 ----
++
+image:images/resource-folders.png[]
 
 [NOTE]
 .Additional Resource Folders
@@ -122,7 +132,9 @@ There is no problem with having additional resource folders defined here.
 For each of the items above in the list, select your project in the _Package Explorer_, right click, and select _New_ > _Folder_ from the context menu.
 
 .. In the _New Folder_ prompt select the root of your project and type in the path for the folder you are making before clicking _Finish_.
-
++
+image:images/make-folder.png[]
++
 [NOTE]
 .Folders as Packages
 ====
@@ -159,10 +171,16 @@ If the Errai Addon finds these plugins in the correct place, it will attempt to 
 .. Select your project in the _Package Explorer_ and press _Ctrl_ + _5_ to activate Forge.
 
 .. In the Forge pop-up select the _Setup Errai in a Project_ option. This will start the start the setup wizard.
++
+image:images/setup-errai.png[]
 
 .. Select the version of Errai you would like to use and click _Next_.
++
+image:images/setup-version.png[]
 
 .. Select your GWT module and click _Next_.
++
+image:images/setup-select-module.png[]
 +
 [IMPORTANT]
 .Multiple GWT Modules
@@ -171,14 +189,20 @@ This plugin currently does not support configuring multiple GWT modules in a pro
 ====
 
 .. If your module has been renamed using the `rename-to` attribute, enter that name here. Otherwise you may enter a new name for your module, or nothing to use the module's logical name.
++
+image:images/setup-module-rename.png[]
 
 .. Pick any Errai features you would like to add. You may also choose to do this at a later time. In this demonstration we will add _Errai IOC_. When you are finished selecting any features (if any), click _Finish_.
++
+image:images/setup-errai-add-features.png[]
 
 ==== 9. Fixing M2Eclipse Errors
 
 At this point, Eclipse is likely showing errors in your _pom.xml_ for the `maven-dependency-plugin` and the `gwt-maven-plugin`. To fix these:
 
 .. Find each plugin in the _pom.xml_. The `execution` tag should have a red underline.
++
+image:images/eclipse-plugin-error.png[]
 
 .. Press _Ctrl_ + _1_ and select _Permanantly mark goal `...` as ignored in Eclipse build_.
 
@@ -217,7 +241,11 @@ mvn clean gwt:run
 
 .. To do this from Eclipse:
 ... Right click on your project and select `Run As...` > `Maven Build...` from the context menu.
++
+image:images/run-as-maven-build.png[]
 ... In the _Edit Configuration_ dialog, enter `clean gwt:run` into the _Goals_ text field.
++
+image:images/run-config-goals.png[]
 ... Click _Apply_ and then _Run_.
 
 ===== Trouble Shooting
@@ -235,6 +263,10 @@ And if none of that helps, you can always ask for help on the link:https://commu
 .. To add more Errai features, open Forge (_Ctrl_ + _5_) and use the _Add Errai Features_ command. Similarly, features can be removed with the _Remove Errai Features_ command.
 
 .. You should now be ready to start using Errai in your project. For example in the Showcase sample, having added Errai IOC, we can now change the `com.google.gwt.sample.showcase.Showcase` class to use the IOC `org.jboss.errai.ioc.client.api.EntryPoint` annotation, rather than the `com.google.gwt.core.client.EntryPoint` interface.
++
+image:images/showcase-entrypoint.png[The `@EntryPoint` causes this class to load when the application starts.]
++
+image:images/showcase-postconstruct.png[The `@Postconstruct` method is invoked after this class is instantiated and injection has ocurred.]
 
 === More Resources
 
