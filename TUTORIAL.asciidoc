@@ -1,0 +1,243 @@
+= GWT-to-Errai Tutorial
+
+== Overview
+
+=== GWT
+
+The link:http://www.gwtproject.org/[Google Web Toolkit] (GWT) is an open source project that allows developers to create their entire web applications in Java by cross-compiling Java to Javascript.
+
+=== Errai
+
+link:http://erraiframework.org/[Errai] is an open source project providing many enhancements to GWT, including HTML5 templates, a bi-directional message bus, an in-browser IoC and CDI container, and more.
+
+=== Tutorial Prerequisites and Goals
+
+==== GWT Concepts
+
+The purpose of this tutorial is to demonstrate how Errai can be added to a pre-existing GWT application. Consequently, this tutorial assumes basic familiarity with the structure of a GWT project.
+
+[IMPORTANT]
+.Key GWT Concepts
+====
+Before reading this tutorial you should be familiar with these parts of a GWT project:
+
+* host page
+* GWT module
+* war file/directory
+====
+
+==== Required Tools
+
+This tutorial will use the following tools:
+
+* link:http://www.eclipse.org/[Eclipse IDE]
+* link:https://eclipse.org/m2e/[Maven2Eclipse Plugin]
+* link:https://github.com/forge/core#jboss-forge-20[Jboss Forge 2.0] plugin for Eclipse
+* link:https://github.com/errai/forge-errai/tree/v2.0.0.Beta1#errai-forge-20-plugin[Errai Addon] for Forge 2.0.
+
+[NOTE]
+.Errai Addon Tutorial
+====
+The link:https://github.com/errai/forge-errai/tree/v2.0.0.Beta1#errai-forge-20-plugin[Errai Addon] GitHub repository contains detailed instructions on how to install the Forge plugin for Eclipse and the Errai Addon.
+====
+
+== Tutorial
+
+=== The GWT Project
+
+For this tutorial we will be using the link:http://gwt.googleusercontent.com/samples/Showcase/Showcase.html#!CwCheckBox[GWT Showcase] sample project. The source for this sample project comes with the GWT SDK (which you can download link:http://www.gwtproject.org/download.html[here]). However, you are encouraged to follow along with your own project!
+
+=== 1. Importing Your Project into Eclipse
+
+.. In the Eclipse menu, go to _File_ > _New_ > _Java Project_.
+
+.. Deselect _Use default location_ and click _Browse_.
+
+.. Find and select the root directory for your project and click _Finish_.
+
+=== 2. Convert Project to Maven
+
+.. If your project is already a maven project then skip to step (3).
+
+.. Right click on your project and select _Configure_ > _Convert to Maven Project_.
+
+.. Fill in the fields for your maven artifact and click _Finish_.
+
+=== 3. Configuring the Source, Resource, and War Source Folders
+
+The current (2.0.0.Beta1) version of the plugin does not fully support dynamic project layouts. Until this is resolved it is necessary to have the following project layout:
+
+--
+** Source Folder: src/main/java
+
+** Resource Folder: src/main/resources
+
+** War Source Folder: src/main/webapp
+--
+
+If you know that your project follows this layout (for example, if you use the default Maven project layout) then you may skip to step (7).
+
+==== 4. Set the Source Directory to `src/main/java`
+
+.. In your project's _pom.xml_ find the tag `project` > `build` > `sourceDirectory` and change it's value to `src/main/java`.
+
+==== 5. Set the Resource Directories
+
+.. In your project's _pom.xml_ find the tag `project` > `build` > `resources` and replace its contents with this:
+
+[source, xml]
+----
+    <resources>
+      <resource>
+        <directory>src/main/java</directory>
+        <excludes>
+          <exclude>**/*.java</exclude>
+        </excludes>
+      </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+        <excludes>
+          <exclude>**/*.java</exclude>
+        </excludes>
+      </resource>
+    </resources>
+----
+
+[NOTE]
+.Additional Resource Folders
+====
+There is no problem with having additional resource folders defined here.
+====
+
+==== 6. Move Resources to the Appropriate Folders
+
+.. First you will need to create the folders:
++
+--
+** `src/main/java`
+** `src/main/resources`
+** `src/main/webapp`
+--
++
+For each of the items above in the list, select your project in the _Package Explorer_, right click, and select _New_ > _Folder_ from the context menu.
+
+.. In the _New Folder_ prompt select the root of your project and type in the path for the folder you are making before clicking _Finish_.
+
+[NOTE]
+.Folders as Packages
+====
+You new folders may appear as packages, if for example your project previously used `src` as the source folder. In this case, you will need to right click on your project and go to `Maven` > `Update Project...` before proceeding.
+====
+
+.. Move your project files to the new folders you've created. In particular:
+... Java source files _and_ your GWT module should go in `src/main/java`.
+... Your other classpath resources (such as `*.properties` files) should go in `src/main/resources`.
+... The entire contents of your previous war source directory (such as your `WEB-INF/web.xml`) should go in `src/main/webapp`.
+
+.. Right click on your project and go to `Maven` > `Update Project...` to do a Maven update before continuing. Eclipse should now show your `src/main/java` and `src/main/resources` folders as source folders.
+
+==== 7. Move Existing Maven Plugin Configurations
+
+If your project was already a Maven project, then it is likely you already have configurations for these plugins:
+--
+* gwt-maven-plugin
+* maven-war-plugin
+* maven-clean-plugin
+* maven-compiler-plugin
+--
+
+If the Errai Addon finds these plugins in the correct place, it will attempt to merge your pre-existing configurations with those required for Errai. To ensure this happens:
+
+.. Make a new profile in your _pom.xml_ with the id `jboss7`.
+
+.. Make a `plugins` tag in the new profile, and cut and paste your entire `maven-war-plugin` setup into it.
+
+.. The other plugins listed above should be located in your `project` > `build` > `plugins` tag.
+
+==== 8. Add Errai to the Project
+
+.. Select your project in the _Package Explorer_ and press _Ctrl_ + _5_ to activate Forge.
+
+.. In the Forge pop-up select the _Setup Errai in a Project_ option. This will start the start the setup wizard.
+
+.. Select the version of Errai you would like to use and click _Next_.
+
+.. Select your GWT module and click _Next_.
++
+[IMPORTANT]
+.Multiple GWT Modules
+====
+This plugin currently does not support configuring multiple GWT modules in a project. If you have multiple GWT modules, you will need to select (or create) one to configure Errai in. If you experience issues with this, it is recommended that you move your GWT modules into separate Maven projects.
+====
+
+.. If your module has been renamed using the `rename-to` attribute, enter that name here. Otherwise you may enter a new name for your module, or nothing to use the module's logical name.
+
+.. Pick any Errai features you would like to add. You may also choose to do this at a later time. In this demonstration we will add _Errai IOC_. When you are finished selecting any features (if any), click _Finish_.
+
+==== 9. Fixing M2Eclipse Errors
+
+At this point, Eclipse is likely showing errors in your _pom.xml_ for the `maven-dependency-plugin` and the `gwt-maven-plugin`. To fix these:
+
+.. Find each plugin in the _pom.xml_. The `execution` tag should have a red underline.
+
+.. Press _Ctrl_ + _1_ and select _Permanantly mark goal `...` as ignored in Eclipse build_.
+
+==== 10. Fixing Dependency Issues
+
+If your project was not initially a Maven project, it is possible that at this point you have some compile errors because of missing dependencies. At this point, you should take the time to add any missing dependencies to your _pom.xml_.
+
+.. For the Showcase example, we will add the gwt-dev dependency by copying the following into the `dependencies` section of your _pom.xml_:
++
+[source, xml]
+----
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-dev</artifactId>
+      <scope>provided</scope>
+    </dependency>
+----
++
+[NOTE]
+.GWT Version
+====
+Note that no version is required because gwt-dev is a managed dependency under the configuration used by the Errai Addon.
+====
+
+.. After adding all missing dependencies, you will need to do another Maven Update of your project before proceeding.
+
+==== 11. Give it a Spin
+
+You should now be ready to try running your project. The goal here is that your project should behave exactly as it did before, but using the Errai Development Mode setup with JBoss AS 7.
+
+.. To do this from the command-line, open a terminal in your projects root directory and run this command:
++
+----
+mvn clean gwt:run
+----
+
+.. To do this from Eclipse:
+... Right click on your project and select `Run As...` > `Maven Build...` from the context menu.
+... In the _Edit Configuration_ dialog, enter `clean gwt:run` into the _Goals_ text field.
+... Click _Apply_ and then _Run_.
+
+===== Trouble Shooting
+
+If you've arrived at this point and your application is not running, here are some things worth investigating:
+
+* Check your _web.xml_ to see if any of your application servlet-mappings have been overwritten.
+* Check that your .class are appearing in `src/main/webapp/WEB-INF/classes`.
+* If you are using server-side CDI, make sure any code that is client-side only is in a package that matches the pattern `*.client.local.*`. The issue here specifically is that the Development Mode CDI container will be able to see these classes, which can cause classloading issues.
+
+And if none of that helps, you can always ask for help on the link:https://community.jboss.org/en/errai[Errai forum].
+
+==== 12. Add More Features and Start Coding
+
+.. To add more Errai features, open Forge (_Ctrl_ + _5_) and use the _Add Errai Features_ command. Similarly, features can be removed with the _Remove Errai Features_ command.
+
+.. You should now be ready to start using Errai in your project. For example in the Showcase sample, having added Errai IOC, we can now change the `com.google.gwt.sample.showcase.Showcase` class to use the IOC `org.jboss.errai.ioc.client.api.EntryPoint` annotation, rather than the `com.google.gwt.core.client.EntryPoint` interface.
+
+=== More Resources
+
+To learn more about what you can do with Errai, check out our link:http://erraiframework.org/[website], and our link:http://docs.jboss.org/errai/3.0-SNAPSHOT/errai/reference/html_single/[documentation].
+
+If you have questions or comments check out our link:https://community.jboss.org/en/errai[forum] or go to the #errai IRC channel on freenode.
