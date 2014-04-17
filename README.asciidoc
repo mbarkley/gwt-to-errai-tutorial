@@ -32,13 +32,13 @@ This tutorial will use the following tools:
 
 * link:http://www.eclipse.org/[Eclipse IDE]
 * link:https://eclipse.org/m2e/[Maven2Eclipse Plugin]
-* link:https://github.com/forge/core#jboss-forge-20[Jboss Forge 2.0] plugin for Eclipse
-* link:https://github.com/errai/forge-errai/tree/v2.0.0.Beta1#errai-forge-20-plugin[Errai Addon] for Forge 2.0.
+* link:https://github.com/forge/core/tree/2.1.1.Final[Jboss Forge 2.1.1] plugin for Eclipse
+* link:https://github.com/errai/errai/tree/3.0.0.20140325-M5/errai-forge-addon[Errai Addon] for Forge 2.0.
 
 [NOTE]
 .Errai Addon Tutorial
 ====
-The link:https://github.com/errai/forge-errai/tree/v2.0.0.Beta1#errai-forge-20-plugin[Errai Addon] GitHub repository contains detailed instructions on how to install the Forge plugin for Eclipse and the Errai Addon.
+The link:https://github.com/errai/errai/tree/3.0.0.20140325-M5/errai-forge-addon[Errai Addon] GitHub repository contains detailed instructions on how to install the Forge plugin for Eclipse and the Errai Addon.
 ====
 
 == Tutorial
